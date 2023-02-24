@@ -1,3 +1,5 @@
+import 'package:carousel_slider/carousel_options.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
 
@@ -53,36 +55,44 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
-  var map = {'name': 'dami', 'age': 10};
+
+  ScrollController _scrollController = ScrollController();
+
+  _scrollToBottom() {
+    _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+  }
+
+  int _currentIndex = 0;
+  List cardList = [
+    Image.network(
+      "https://cdn.shopify.com/s/files/1/0428/8063/0937/files/1200x1200_ce7d5bae-67b3-4e47-8d87-0fec82ae6072_x800.jpg?v=1677161687",
+      fit: BoxFit.cover,
+    ),
+    Image.network(
+      'https://cdn.shopify.com/s/files/1/0428/8063/0937/files/Banner-for-Combos--Makeup-Webstore_1080x1080_5a0004cc-098d-4477-931f-9df9d647b39f_x800.jpg?v=1677050467',
+      fit: BoxFit.cover,
+    ),
+    Image.network(
+      'https://cdn.shopify.com/s/files/1/0428/8063/0937/files/1200-x-1200_0beca3ad-8029-443f-87c1-ab235f96de2e_x800.gif?v=1676458262',
+      fit: BoxFit.cover,
+    ),
+    Image.network(
+      "https://cdn.shopify.com/s/files/1/0428/8063/0937/files/1200x1200_Creative_1_x800.jpg?v=1677138933",
+      fit: BoxFit.cover,
+    )
+  ];
+  List<T> map<T>(List list, Function handler) {
+    List<T> result = [];
+    for (var i = 0; i < list.length; i++) {
+      result.add(handler(i, list[i]));
+    }
+    return result;
+  }
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-  }
-
-  void _incrementCounter() {
-    print(map['name']);
-
-    map['name'] = 'john';
-    print(map['name']);
-    map = {
-      'ten': 10,
-      'eleven': 11,
-      'twelve': 12,
-      'thirteen': 13,
-      'fourteen': 14,
-      'fifteen': 15,
-      'sixteen': 16
-    };
-    map.remove('twelve');
-    map.removeWhere((key, value) {
-      return (int.parse(value.toString()) % 2 == 0);
-    });
-    print(map);
-  }
-
-  @override
-  Widget build(BuildContext context) {
     Future.delayed(
         const Duration(seconds: 0),
         () => showDialog(
@@ -92,7 +102,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         borderRadius: BorderRadius.circular(20)),
                     actionsAlignment: MainAxisAlignment.center,
                     contentPadding: const EdgeInsets.all(10),
-                    actionsPadding: const EdgeInsets.all(30),
+                    actionsPadding: const EdgeInsets.symmetric(vertical: 30),
                     scrollable: true,
                     title: const Text(
                       'Would you like to recieve Push Notifications?',
@@ -120,6 +130,13 @@ class _MyHomePageState extends State<MyHomePage> {
                             style: TextStyle(color: Colors.white)),
                       )
                     ])));
+  }
+
+  @override
+  void onLoad() {}
+
+  @override
+  Widget build(BuildContext context) {
     // This method is rerun every time setState is called, for instance as done
     // by the _incrementCounter method above.
     //
@@ -130,56 +147,162 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         // Here we take the value from the MyHomePage object that was created by
         // the App.build method, and use it to set our appbar title.
-        title: _typer(), backgroundColor: Color(0xffF6F4F5),
-        elevation: 0.5, toolbarHeight: 200,
-        actionsIconTheme: const IconThemeData(color: Colors.white),
+        backgroundColor: Color(0xffF6F4F5),
+        elevation: 0.5,
+        titleSpacing: 0,
         automaticallyImplyLeading: false,
-
-        leading: IconButton(
-          icon: const Icon(Icons.search, color: Color(0xff212529)),
-          onPressed: () {
-            showSearch(
-                context: context,
-                delegate: CustomSearchHintDelegate(
-                    hintText: 'Search for products...'));
-          },
+        title: Container(
+          color: const Color(0xff91215c),
+          padding: EdgeInsets.all(20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: const [
+                  Text(
+                    "Contact: ",
+                    style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
+                  ),
+                  Text(
+                    "1800120036231",
+                    style: TextStyle(
+                      fontSize: 12,
+                    ),
+                  ),
+                ],
+              ),
+              Row(
+                children: [
+                  Text(
+                    "Email ID: ",
+                    style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
+                  ),
+                  Text(
+                    "care@lotusherbals.com",
+                    style: TextStyle(
+                      fontSize: 12,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+        actionsIconTheme: IconThemeData(
+          color: const Color(0xffffffff),
+        ),
+        actions: [
+          InkWell(
+            onTap: () {},
+            child: Container(
+              color: const Color(0xff91215c),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [Icon(Icons.person), Text('Login/Signup')],
+              ),
+            ),
+          )
+        ],
+        bottom: PreferredSize(
+          preferredSize: Size(MediaQuery.of(context).size.width,
+              MediaQuery.of(context).size.height / 6),
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    IconButton(
+                      icon: const Icon(
+                        Icons.menu,
+                        color: Color(0xff212529),
+                      ),
+                      onPressed: () {},
+                    ),
+                    Image.network(
+                      'https://cdn.shopify.com/s/files/1/0428/8063/0937/files/logo_8682e62f-92f9-4366-adc6-a683d89e79ba_140x@2x.png?v=1671636499',
+                      height: 30,
+                    ),
+                    IconButton(
+                      icon: const Icon(
+                        Icons.shopping_cart,
+                        color: Color(0xff212529),
+                      ),
+                      onPressed: () {},
+                    ),
+                  ],
+                ),
+              ),
+              Row(
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.search, color: Color(0xff212529)),
+                    onPressed: () {
+                      showSearch(
+                          context: context,
+                          delegate: CustomSearchHintDelegate(
+                              hintText: 'Search for products...'));
+                    },
+                  ),
+                  _typer(),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Invoke "debug painting" (press "p" in the console, choose the
-          // "Toggle Debug Paint" action from the Flutter Inspector in Android
-          // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-          // to see the wireframe for each widget.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline4,
-            ),
-          ],
+      body: Container(
+        child: CarouselSlider(
+          options: CarouselOptions(
+            autoPlay: true,
+            autoPlayInterval: Duration(seconds: 3),
+            autoPlayAnimationDuration: Duration(milliseconds: 800),
+            autoPlayCurve: Curves.fastOutSlowIn,
+            pauseAutoPlayOnTouch: true,
+            aspectRatio: 1.0,
+            onPageChanged: (index, reason) {
+              setState(() {
+                _currentIndex = index;
+              });
+            },
+          ),
+          items: cardList.map((card) {
+            return Builder(builder: (BuildContext context) {
+              return Container(
+                width: MediaQuery.of(context).size.width,
+                child: Stack(alignment: Alignment.center, children: [
+                  Card(
+                    child: card,
+                  ),
+                  Positioned(
+                    top: 300,
+                    child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: map<Widget>(
+                          cardList,
+                          (index, url) {
+                            return Container(
+                              width: 8.0,
+                              height: 8.0,
+                              margin: EdgeInsets.symmetric(
+                                  vertical: 10.0, horizontal: 2.0),
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(300),
+                                  border: Border.all(color: Color(0xff91215c)),
+                                  color: _currentIndex == index
+                                      ? Color(0xff91215c)
+                                      : Color.fromRGBO(0, 0, 0, 0)),
+                            );
+                          },
+                        )),
+                  ),
+                ]),
+              );
+            });
+          }).toList(),
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 
@@ -196,7 +319,6 @@ class _MyHomePageState extends State<MyHomePage> {
               speed: Duration(milliseconds: 100)),
           TyperAnimatedText(' Search for Makeup',
               speed: Duration(milliseconds: 100)),
-          TyperAnimatedText('– Dalai Lama', speed: Duration(milliseconds: 100)),
         ]),
       ),
     );
@@ -231,6 +353,7 @@ class CustomSearchHintDelegate extends SearchDelegate {
         icon: Icon(Icons.clear),
         onPressed: () {
           query = '';
+          Navigator.pop(context);
         },
       ),
     ];
