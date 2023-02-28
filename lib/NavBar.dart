@@ -80,12 +80,15 @@ class _NavBarState extends State<NavBar> {
             child: ExpansionTile(
               onExpansionChanged: (i) {
                 setState(() {
-                  isPress = !isPress;
+                  isPress = i;
+                  expandedEntity[index].isPress = isPress;
                 });
               },
               title: Text(nav[index]),
               backgroundColor: Colors.transparent,
-              trailing: Icon(isPress ? Icons.remove : Icons.add),
+              trailing: expandedEntity[index].isPress
+                  ? Icon(Icons.remove)
+                  : Icon(expandedEntity[index].icon.icon),
               children: [
                 ListView.builder(
                   itemBuilder: (BuildContext context, int index) => ListTile(
@@ -140,4 +143,18 @@ class _NavBarState extends State<NavBar> {
   ];
 
   var baby = ['BABY', 'BEST SELLERS', 'WHAT\'S NEW'];
+  var expandedEntity = [
+    isExpanded(isPress: false, icon: Icon(Icons.add)),
+    isExpanded(isPress: false, icon: Icon(Icons.add)),
+    isExpanded(isPress: false, icon: Icon(Icons.add)),
+    isExpanded(isPress: false, icon: Icon(Icons.add)),
+    isExpanded(isPress: false, icon: Icon(Icons.add)),
+    isExpanded(isPress: false, icon: Icon(Icons.add)),
+  ];
+}
+
+class isExpanded {
+  bool isPress;
+  Icon icon;
+  isExpanded({required this.isPress, required this.icon});
 }
