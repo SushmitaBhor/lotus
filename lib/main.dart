@@ -1,5 +1,7 @@
 import 'package:carousel_slider/carousel_options.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:dsa/NavBar.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
 
@@ -134,7 +136,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   void onLoad() {}
-
+  GlobalKey<ScaffoldState> key = GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {
     // This method is rerun every time setState is called, for instance as done
@@ -144,6 +146,10 @@ class _MyHomePageState extends State<MyHomePage> {
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
     return Scaffold(
+      drawer: NavBar(),
+      key: key,
+      drawerEnableOpenDragGesture: true,
+      drawerDragStartBehavior: DragStartBehavior.start,
       appBar: AppBar(
         // Here we take the value from the MyHomePage object that was created by
         // the App.build method, and use it to set our appbar title.
@@ -218,7 +224,9 @@ class _MyHomePageState extends State<MyHomePage> {
                         Icons.menu,
                         color: Color(0xff212529),
                       ),
-                      onPressed: () {},
+                      onPressed: () {
+                        key.currentState?.openDrawer();
+                      },
                     ),
                     Image.network(
                       'https://cdn.shopify.com/s/files/1/0428/8063/0937/files/logo_8682e62f-92f9-4366-adc6-a683d89e79ba_140x@2x.png?v=1671636499',
