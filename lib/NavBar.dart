@@ -2,7 +2,8 @@ import 'package:dsa/staggered_card.dart';
 import 'package:flutter/material.dart';
 
 class NavBar extends StatefulWidget {
-  NavBar({Key? key}) : super(key: key);
+  GlobalKey<ScaffoldState> keyGlobal;
+  NavBar({Key? key, required this.keyGlobal}) : super(key: key);
 
   @override
   State<NavBar> createState() => _NavBarState();
@@ -88,7 +89,7 @@ class _NavBarState extends State<NavBar> {
               title: Text(nav[index]),
               backgroundColor: Colors.transparent,
               trailing: expandedEntity[index].isPress
-                  ? Icon(Icons.remove)
+                  ? const Icon(Icons.remove)
                   : Icon(expandedEntity[index].icon.icon),
               children: [
                 ListView.builder(
@@ -97,7 +98,9 @@ class _NavBarState extends State<NavBar> {
                         onTap: () => Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => StaggeredCard())),
+                                builder: (context) => StaggeredCard(
+                                      keyGlobal: widget.keyGlobal,
+                                    ))),
                         child: Text(baby[index])),
                   ),
                   itemCount: baby.length,
@@ -108,7 +111,7 @@ class _NavBarState extends State<NavBar> {
           );
         },
         separatorBuilder: (BuildContext context, int index) {
-          return Divider();
+          return const Divider();
         },
         itemCount: 6);
   }

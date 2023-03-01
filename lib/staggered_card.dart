@@ -1,8 +1,11 @@
 import 'package:auto_animated/auto_animated.dart';
 import 'package:flutter/material.dart';
 
+import 'AppBar.dart';
+
 class StaggeredCard extends StatefulWidget {
-  const StaggeredCard({Key? key}) : super(key: key);
+  GlobalKey<ScaffoldState> keyGlobal;
+  StaggeredCard({Key? key, required this.keyGlobal}) : super(key: key);
 
   @override
   State<StaggeredCard> createState() => _StaggeredCardState();
@@ -11,23 +14,104 @@ class StaggeredCard extends StatefulWidget {
 class _StaggeredCardState extends State<StaggeredCard> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(body: sample());
-  }
-
-  Widget card() {
-    return SingleChildScrollView(
-      physics: const NeverScrollableScrollPhysics(),
-      child: Column(
-        children: [
-          Text('Hey '),
-          Image.network(
-              'https://cdn.shopify.com/s/files/1/0428/8063/0937/products/DayandNightCombo01_400x.jpg?v=1666074077')
-        ],
-      ),
+    return AppBarCustom(
+      body: sample(),
     );
   }
 
-  final options = LiveOptions(
+  Widget imageAndTitle() {
+    return Card(
+        margin: EdgeInsets.all(10),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        borderOnForeground: true,
+        elevation: 20,
+        child: Column(children: [
+          Flexible(
+              flex: 2,
+              child: Container(
+                  alignment: Alignment.topCenter,
+                  decoration: const BoxDecoration(
+                      borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(10),
+                          topRight: Radius.circular(10)),
+                      image: DecorationImage(
+                          image: NetworkImage(
+                            'https://cdn.shopify.com/s/files/1/0428/8063/0937/products/DayandNightCombo01_400x.jpg?v=1666074077',
+                          ),
+                          fit: BoxFit.cover)))),
+          FittedBox(
+              child: Column(mainAxisSize: MainAxisSize.min, children: [
+            SizedBox(height: MediaQuery.of(context).size.width > 500 ? 20 : 0),
+            Text(
+              'Lotus Herbals WHITE GLOW Day And Night Pack',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  color: Colors.grey,
+                  fontSize: MediaQuery.of(context).size.width > 500 ? 16 : 10),
+            ),
+            SizedBox(height: MediaQuery.of(context).size.width > 500 ? 20 : 0),
+            MediaQuery.of(context).size.width > 500
+                ? Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: const [
+                        Text(
+                          'MRP ₹ 696.00',
+                          style: TextStyle(
+                              color: Colors.orange,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600),
+                        ),
+                        SizedBox(width: 10),
+                        Text('MRP ₹ 870.00',
+                            style: TextStyle(
+                                decoration: TextDecoration.lineThrough,
+                                color: Colors.black,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600))
+                      ])
+                : Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                        Text(
+                          'MRP ₹ 696.00',
+                          style: TextStyle(
+                              color: Colors.orange,
+                              fontSize: MediaQuery.of(context).size.width > 500
+                                  ? 16
+                                  : 10,
+                              fontWeight: FontWeight.w600),
+                        ),
+                        const SizedBox(height: 10),
+                        Text('MRP ₹ 870.00',
+                            style: TextStyle(
+                                decoration: TextDecoration.lineThrough,
+                                color: Colors.black,
+                                fontSize:
+                                    MediaQuery.of(context).size.width > 500
+                                        ? 16
+                                        : 10,
+                                fontWeight: FontWeight.w600))
+                      ]),
+            SizedBox(height: MediaQuery.of(context).size.width > 500 ? 10 : 0),
+            MaterialButton(
+                onPressed: () {},
+                padding: EdgeInsets.symmetric(
+                    horizontal:
+                        MediaQuery.of(context).size.width > 500 ? 30 : 20,
+                    vertical: 10),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10)),
+                color: const Color(0xff90215C),
+                child: const Text('ADD TO CART',
+                    style: TextStyle(color: Colors.white))),
+            SizedBox(height: MediaQuery.of(context).size.width > 500 ? 20 : 0)
+          ]))
+        ]));
+  }
+
+  final options = const LiveOptions(
     // Start animation after (default zero)
     delay: Duration(seconds: 1),
 
@@ -57,9 +141,9 @@ class _StaggeredCardState extends State<StaggeredCard> {
       // Other properties correspond to the `ListView.builder` / `ListView.separated` widget
       itemCount: 20,
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 3,
-        crossAxisSpacing: 16,
-        mainAxisSpacing: 16,
+        crossAxisCount: MediaQuery.of(context).size.width > 500 ? 3 : 2,
+        crossAxisSpacing: 30,
+        mainAxisSpacing: 100,
       ),
     );
   }
@@ -83,7 +167,7 @@ class _StaggeredCardState extends State<StaggeredCard> {
             end: Offset(0, -0.1),
           ).animate(animation),
           // Paste you Widget
-          child: card(),
+          child: imageAndTitle(),
         ),
       );
 }
