@@ -138,7 +138,7 @@ class _MyHomePageState extends State<MyHomePage> {
           autoPlayCurve: Curves.fastOutSlowIn,
           enableInfiniteScroll: true,
           autoPlayAnimationDuration: const Duration(milliseconds: 800),
-          viewportFraction: 0.3,
+          viewportFraction: MediaQuery.of(context).size.width > 500 ? 0.3 : 1,
         ),
         items: [
           Container(
@@ -220,7 +220,7 @@ class CustomSearchHintDelegate extends SearchDelegate {
   List<Widget> buildActions(BuildContext context) {
     return [
       IconButton(
-        icon: Icon(Icons.clear),
+        icon: const Icon(Icons.clear),
         onPressed: () {
           query = '';
           Navigator.pop(context);
