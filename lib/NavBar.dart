@@ -1,3 +1,4 @@
+import 'package:dsa/staggered_card.dart';
 import 'package:flutter/material.dart';
 
 class NavBar extends StatefulWidget {
@@ -92,7 +93,12 @@ class _NavBarState extends State<NavBar> {
               children: [
                 ListView.builder(
                   itemBuilder: (BuildContext context, int index) => ListTile(
-                    title: Text(baby[index]),
+                    title: InkWell(
+                        onTap: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => StaggeredCard())),
+                        child: Text(baby[index])),
                   ),
                   itemCount: baby.length,
                   shrinkWrap: true,
