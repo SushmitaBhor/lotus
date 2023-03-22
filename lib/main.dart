@@ -1,11 +1,13 @@
+import 'dart:async';
+
 import 'package:carousel_slider/carousel_options.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:dots_indicator/dots_indicator.dart';
+import 'package:dsa/new_slide.dart';
 
-import 'package:dsa/NavBar.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:animated_text_kit/animated_text_kit.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
+import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 import 'AppBar.dart';
 
@@ -19,7 +21,6 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    int _counter = 0;
     return MaterialApp(
         title: 'Flutter Demo',
         debugShowCheckedModeBanner: false,
@@ -60,33 +61,22 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+  final controller = PageController(viewportFraction: 1, keepPage: true);
 
-  ScrollController _scrollController = ScrollController();
-
-  _scrollToBottom() {
-    _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
-  }
-
-  int _currentIndex = 0;
   List cardList = [
     "https://cdn.shopify.com/s/files/1/0428/8063/0937/files/1200x1200_ce7d5bae-67b3-4e47-8d87-0fec82ae6072_x800.jpg?v=1677161687",
     'https://cdn.shopify.com/s/files/1/0428/8063/0937/files/Banner-for-Combos--Makeup-Webstore_1080x1080_5a0004cc-098d-4477-931f-9df9d647b39f_x800.jpg?v=1677050467',
     'https://cdn.shopify.com/s/files/1/0428/8063/0937/files/1200-x-1200_0beca3ad-8029-443f-87c1-ab235f96de2e_x800.gif?v=1676458262',
-    "https://cdn.shopify.com/s/files/1/0428/8063/0937/files/1200x1200_Creative_1_x800.jpg?v=1677138933"
+    "https://cdn.shopify.com/s/files/1/0428/8063/0937/files/1200x1200_Creative_1_x800.jpg?v=1677138933",
   ];
-  List<T> map<T>(List list, Function handler) {
-    List<T> result = [];
-    for (var i = 0; i < list.length; i++) {
-      result.add(handler(i, list[i]));
-    }
-    return result;
-  }
-
+  int _currNext = 0;
+  int _currPrev = 0;
   @override
   void initState() {
-    // TODO: implement initState
+    controller.addListener(_scrollPage);
     super.initState();
+    pagination();
+
     Future.delayed(
         const Duration(seconds: 0),
         () => showDialog(
@@ -126,61 +116,88 @@ class _MyHomePageState extends State<MyHomePage> {
                     ])));
   }
 
-  CarouselController controller = CarouselController();
-  int currentIndex = 1;
+  late Timer timer;
+  bool movePrevious = false;
+  void pagination() {
+    timer = Timer.periodic(const Duration(seconds: 8), (Timer timer) {
+      if (controller.hasClients) {
+        if (controller.page == 3) {
+          movePrevious = true;
+          controller.previousPage(
+              duration: const Duration(seconds: 2), curve: Curves.easeIn);
+        } else {
+          if (movePrevious) {
+            movePrevious = false;
+            controller.previousPage(
+                duration: const Duration(seconds: 2), curve: Curves.easeIn);
+          } else {
+            controller.nextPage(
+                duration: const Duration(seconds: 2), curve: Curves.easeIn);
+          }
+        }
+      }
+    });
+  }
+
+  void _scrollPage() {
+    _currNext = controller.page!.ceil();
+    _currPrev = controller.page!.ceil();
+    if (controller.position.userScrollDirection == ScrollDirection.reverse) {
+      controller.animateToPage(_currNext,
+          duration: const Duration(milliseconds: 100), curve: Curves.easeIn);
+    } else if (controller.position.userScrollDirection ==
+        ScrollDirection.forward) {
+      controller.animateToPage(_currPrev,
+          duration: const Duration(milliseconds: 100), curve: Curves.easeIn);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
+    final pages = List.generate(
+        cardList.length,
+        (index) => Container(
+              margin: const EdgeInsets.all(8.0),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(10.0),
+                child: Image.network(
+                  cardList[index],
+                  width: MediaQuery.of(context).size.width,
+                  height: MediaQuery.of(context).size.height * 0.7,
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ));
     return AppBarCustom(
       body: Stack(alignment: Alignment.bottomCenter, children: [
-        CarouselSlider(
-            carouselController: controller,
-            options: CarouselOptions(
-              height: 380.0,
-              autoPlay: true,
-              onPageChanged: (int i, CarouselPageChangedReason) {
-                setState(() {
-                  currentIndex = i;
-                });
-              },
-              aspectRatio: 16 / 9,
-              autoPlayCurve: Curves.fastOutSlowIn,
-              enableInfiniteScroll: true,
-              autoPlayAnimationDuration: const Duration(milliseconds: 800),
-              viewportFraction:
-                  MediaQuery.of(context).size.width > 500 ? 0.3 : 1,
-            ),
-            items: cardList
-                .map(
-                  (e) => Container(
-                    margin: const EdgeInsets.all(8.0),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10.0),
-                      image: DecorationImage(
-                        image: NetworkImage(e),
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  ),
-                )
-                .toList()),
-        Positioned(
-          bottom: 10,
-          child: DotsIndicator(
-            dotsCount: cardList.length,
-            position: double.parse(currentIndex.toString()),
-            decorator: const DotsDecorator(
-                shape: CircleBorder(side: BorderSide(color: Color(0xff721a57))),
-                activeColor: Color(0xff721a57),
-                color: Colors.transparent // Àctive dot colors
-                ),
+        SizedBox(
+          height: MediaQuery.of(context).size.height * 0.7,
+          width: MediaQuery.of(context).size.width,
+          child: PageView.builder(
+            controller: controller,
+            // itemCount: pages.length,
+            itemBuilder: (_, index) {
+              return pages[index % pages.length];
+            },
           ),
-        )
+        ),
+        Positioned(
+          bottom: 20,
+          child: SmoothPageIndicator(
+            count: pages.length,
+            controller: controller,
+            effect: WormEffect(
+              radius: 16,
+              spacing: 20,
+              strokeWidth: 1,
+              activeDotColor: Color(0xff91215c),
+              dotColor: Color(0xff91215c),
+              dotHeight: 10,
+              paintStyle: PaintingStyle.stroke,
+              dotWidth: 10,
+            ),
+          ),
+        ),
       ]),
     );
   }
