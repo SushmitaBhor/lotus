@@ -1,9 +1,5 @@
 import 'dart:async';
 
-import 'package:carousel_slider/carousel_options.dart';
-import 'package:carousel_slider/carousel_slider.dart';
-import 'package:dsa/new_slide.dart';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
@@ -68,6 +64,13 @@ class _MyHomePageState extends State<MyHomePage> {
     'https://cdn.shopify.com/s/files/1/0428/8063/0937/files/Banner-for-Combos--Makeup-Webstore_1080x1080_5a0004cc-098d-4477-931f-9df9d647b39f_x800.jpg?v=1677050467',
     'https://cdn.shopify.com/s/files/1/0428/8063/0937/files/1200-x-1200_0beca3ad-8029-443f-87c1-ab235f96de2e_x800.gif?v=1676458262',
     "https://cdn.shopify.com/s/files/1/0428/8063/0937/files/1200x1200_Creative_1_x800.jpg?v=1677138933",
+  ];
+  List<String> beautyImage = [
+    'imagess/Artificial_fragrance_Free.png',
+    'imagess/Clinically_tested.png',
+    'imagess/Cruelty_Free.png',
+    'imagess/Dermatologist_Tested.png',
+    'imagess/parabenfree.png'
   ];
   int _currNext = 0;
   int _currPrev = 0;
@@ -169,36 +172,134 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             ));
     return AppBarCustom(
-      body: Stack(alignment: Alignment.bottomCenter, children: [
-        SizedBox(
-          height: MediaQuery.of(context).size.height * 0.7,
-          width: MediaQuery.of(context).size.width,
-          child: PageView.builder(
-            controller: controller,
-            // itemCount: pages.length,
-            itemBuilder: (_, index) {
-              return pages[index % pages.length];
-            },
-          ),
-        ),
-        Positioned(
-          bottom: 20,
-          child: SmoothPageIndicator(
-            count: pages.length,
-            controller: controller,
-            effect: WormEffect(
-              radius: 16,
-              spacing: 20,
-              strokeWidth: 1,
-              activeDotColor: Color(0xff91215c),
-              dotColor: Color(0xff91215c),
-              dotHeight: 10,
-              paintStyle: PaintingStyle.stroke,
-              dotWidth: 10,
+      body: SingleChildScrollView(
+        padding: EdgeInsets.symmetric(horizontal: 8.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Stack(alignment: Alignment.bottomCenter, children: [
+              SizedBox(
+                height: MediaQuery.of(context).size.height * 0.7,
+                width: MediaQuery.of(context).size.width,
+                child: PageView.builder(
+                  controller: controller,
+                  // itemCount: pages.length,
+                  itemBuilder: (_, index) {
+                    return pages[index % pages.length];
+                  },
+                ),
+              ),
+              Positioned(
+                bottom: 20,
+                child: SmoothPageIndicator(
+                  count: pages.length,
+                  controller: controller,
+                  effect: WormEffect(
+                    radius: 16,
+                    spacing: 20,
+                    strokeWidth: 1,
+                    activeDotColor: Color(0xff91215c),
+                    dotColor: Color(0xff91215c),
+                    dotHeight: 10,
+                    paintStyle: PaintingStyle.stroke,
+                    dotWidth: 10,
+                  ),
+                ),
+              ),
+            ]),
+            SizedBox(
+              height: MediaQuery.of(context).size.height * 0.3,
+              child: ListView.separated(
+                  shrinkWrap: true,
+                  scrollDirection: Axis.horizontal,
+                  itemBuilder: (ctx, i) => Image.asset(
+                        beautyImage[i],
+                        height: MediaQuery.of(context).size.height * 0.1,
+                        fit: BoxFit.cover,
+                      ),
+                  separatorBuilder: (ctx, i) => Container(
+                        width: 10,
+                      ),
+                  itemCount: beautyImage.length),
             ),
-          ),
+            const SizedBox(height: 20),
+            const Text(
+              'NON-TOXIC BEAUTY FOR YOU',
+              style: TextStyle(
+                  fontFamily: 'NotoSerif',
+                  fontWeight: FontWeight.w400,
+                  fontSize: 20),
+            ),
+            const SizedBox(height: 20),
+            const Text(
+              'We make products that cater to all skin types. They are intuitive, solution oriented & inclusive of all Indian skin types and shades.',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  fontFamily: 'OpenSans',
+                  fontWeight: FontWeight.w400,
+                  fontSize: 14),
+            ),
+            const SizedBox(height: 20),
+            GridView.builder(
+              shrinkWrap: true,
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 3,
+                  mainAxisExtent: 500,
+                  childAspectRatio: 1,
+                  crossAxisSpacing: 40,
+                  mainAxisSpacing: 40),
+              itemBuilder: (BuildContext context, int index) {
+                return SizedBox(
+                  height: 200,
+                  width: 100,
+                  child: Stack(children: [
+                    Image.network(
+                      'https://cdn.shopify.com/s/files/1/0428/8063/0937/files/1200x1200_creative_for_Probrite_Range_750x960_crop_center.jpg?v=1671181217',
+                      width: MediaQuery.of(context).size.width,
+                      height: MediaQuery.of(context).size.height * 0.7,
+                      fit: BoxFit.cover,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 20.0, bottom: 20),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Text('Probrite collection'.toUpperCase(),
+                              style: TextStyle(
+                                  fontFamily: 'NotoSerif',
+                                  fontWeight: FontWeight.w400,
+                                  fontSize: 20,
+                                  color: Colors.white)),
+                          const SizedBox(height: 10),
+                          ElevatedButton(
+                            onPressed: () {},
+                            child: Text('view products'.toUpperCase(),
+                                style: TextStyle(
+                                    fontFamily: 'NotoSerif',
+                                    fontWeight: FontWeight.w400,
+                                    fontSize: 12,
+                                    color: Colors.black)),
+                            style: ButtonStyle(
+                                padding: MaterialStatePropertyAll<
+                                        EdgeInsetsGeometry>(
+                                    EdgeInsets.symmetric(
+                                        horizontal: 14, vertical: 28)),
+                                backgroundColor:
+                                    MaterialStatePropertyAll<Color>(
+                                        Color(0xffFFFFFF))),
+                          )
+                        ],
+                      ),
+                    )
+                  ]),
+                );
+              },
+              itemCount: 12,
+            )
+          ],
         ),
-      ]),
+      ),
     );
   }
 }
