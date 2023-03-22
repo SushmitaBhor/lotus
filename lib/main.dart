@@ -1,5 +1,7 @@
 import 'package:carousel_slider/carousel_options.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:dots_indicator/dots_indicator.dart';
+
 import 'package:dsa/NavBar.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -67,7 +69,12 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   int _currentIndex = 0;
-  List cardList = [];
+  List cardList = [
+    "https://cdn.shopify.com/s/files/1/0428/8063/0937/files/1200x1200_ce7d5bae-67b3-4e47-8d87-0fec82ae6072_x800.jpg?v=1677161687",
+    'https://cdn.shopify.com/s/files/1/0428/8063/0937/files/Banner-for-Combos--Makeup-Webstore_1080x1080_5a0004cc-098d-4477-931f-9df9d647b39f_x800.jpg?v=1677050467',
+    'https://cdn.shopify.com/s/files/1/0428/8063/0937/files/1200-x-1200_0beca3ad-8029-443f-87c1-ab235f96de2e_x800.gif?v=1676458262',
+    "https://cdn.shopify.com/s/files/1/0428/8063/0937/files/1200x1200_Creative_1_x800.jpg?v=1677138933"
+  ];
   List<T> map<T>(List list, Function handler) {
     List<T> result = [];
     for (var i = 0; i < list.length; i++) {
@@ -120,6 +127,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   CarouselController controller = CarouselController();
+  int currentIndex = 1;
   @override
   Widget build(BuildContext context) {
     // This method is rerun every time setState is called, for instance as done
@@ -129,68 +137,51 @@ class _MyHomePageState extends State<MyHomePage> {
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
     return AppBarCustom(
-      body: CarouselSlider(
-        carouselController: controller,
-        options: CarouselOptions(
-          height: 380.0,
-          autoPlay: true,
-          aspectRatio: 16 / 9,
-          autoPlayCurve: Curves.fastOutSlowIn,
-          enableInfiniteScroll: true,
-          autoPlayAnimationDuration: const Duration(milliseconds: 800),
-          viewportFraction: MediaQuery.of(context).size.width > 500 ? 0.3 : 1,
-        ),
-        items: [
-          Container(
-            margin: const EdgeInsets.all(8.0),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10.0),
-              image: const DecorationImage(
-                image: NetworkImage(
-                  "https://cdn.shopify.com/s/files/1/0428/8063/0937/files/1200x1200_ce7d5bae-67b3-4e47-8d87-0fec82ae6072_x800.jpg?v=1677161687",
-                ),
-                fit: BoxFit.cover,
-              ),
+      body: Stack(alignment: Alignment.bottomCenter, children: [
+        CarouselSlider(
+            carouselController: controller,
+            options: CarouselOptions(
+              height: 380.0,
+              autoPlay: true,
+              onPageChanged: (int i, CarouselPageChangedReason) {
+                setState(() {
+                  currentIndex = i;
+                });
+              },
+              aspectRatio: 16 / 9,
+              autoPlayCurve: Curves.fastOutSlowIn,
+              enableInfiniteScroll: true,
+              autoPlayAnimationDuration: const Duration(milliseconds: 800),
+              viewportFraction:
+                  MediaQuery.of(context).size.width > 500 ? 0.3 : 1,
             ),
-          ),
-          Container(
-            margin: EdgeInsets.all(8.0),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10.0),
-              image: const DecorationImage(
-                image: NetworkImage(
-                  'https://cdn.shopify.com/s/files/1/0428/8063/0937/files/Banner-for-Combos--Makeup-Webstore_1080x1080_5a0004cc-098d-4477-931f-9df9d647b39f_x800.jpg?v=1677050467',
+            items: cardList
+                .map(
+                  (e) => Container(
+                    margin: const EdgeInsets.all(8.0),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10.0),
+                      image: DecorationImage(
+                        image: NetworkImage(e),
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
+                )
+                .toList()),
+        Positioned(
+          bottom: 10,
+          child: DotsIndicator(
+            dotsCount: cardList.length,
+            position: double.parse(currentIndex.toString()),
+            decorator: const DotsDecorator(
+                shape: CircleBorder(side: BorderSide(color: Color(0xff721a57))),
+                activeColor: Color(0xff721a57),
+                color: Colors.transparent // Àctive dot colors
                 ),
-                fit: BoxFit.cover,
-              ),
-            ),
           ),
-          Container(
-            margin: const EdgeInsets.all(8.0),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10.0),
-              image: const DecorationImage(
-                image: NetworkImage(
-                  'https://cdn.shopify.com/s/files/1/0428/8063/0937/files/1200-x-1200_0beca3ad-8029-443f-87c1-ab235f96de2e_x800.gif?v=1676458262',
-                ),
-                fit: BoxFit.cover,
-              ),
-            ),
-          ),
-          Container(
-            margin: const EdgeInsets.all(8.0),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10.0),
-              image: const DecorationImage(
-                image: NetworkImage(
-                  "https://cdn.shopify.com/s/files/1/0428/8063/0937/files/1200x1200_Creative_1_x800.jpg?v=1677138933",
-                ),
-                fit: BoxFit.cover,
-              ),
-            ),
-          ),
-        ],
-      ),
+        )
+      ]),
     );
   }
 }
